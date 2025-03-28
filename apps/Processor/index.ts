@@ -3,7 +3,7 @@ import { Kafka } from "kafkajs";
 
 
 const kafka = new Kafka({
-    clientId: "outbox=processor",
+    clientId: "outbox-processor",
     brokers: ['localhost:9092']
 })
 
