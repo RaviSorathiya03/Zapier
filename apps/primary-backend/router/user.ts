@@ -1,6 +1,6 @@
 import express from "express";
 import { authMiddleware } from "../middleware";
-import { signinSchema, signupSchema } from "../types";
+import { SigninSchema, SignupSchema } from "../types";
 export const userRouter = express.Router();
 import type { Request, Response } from "express";
 import { db } from "db/client";
@@ -9,7 +9,7 @@ import jwt from "jsonwebtoken";
 
 userRouter.post("/signup", async (req: Request, res: any)=>{
     try {
-        const data = signupSchema.safeParse(req.body);
+        const data = SignupSchema.safeParse(req.body);
         console.log(req.body);
         if(!data.success){
             return res.status(403).json({
@@ -51,7 +51,7 @@ userRouter.post("/signup", async (req: Request, res: any)=>{
 
 userRouter.post("/signin", async (req: any, res:any)=>{
     try {
-        const data = signinSchema.safeParse(req.body);
+        const data = SigninSchema.safeParse(req.body);
         if(!data.success){
             return res.status(400).json({
                 message: "Something went wrong"

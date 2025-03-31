@@ -13,6 +13,7 @@ async function main(){
     await consumer.subscribe({topic: "zap-events", fromBeginning: true});
 
     await consumer.run({
+        autoCommit: false,
         eachMessage: async ({topic, partition, message})=>{
             console.log({
                 partition,
@@ -21,6 +22,13 @@ async function main(){
             })
 
             await new Promise((r)=> setTimeout(r, 1000));
+            await consumer.commitOffsets([
+                {
+                    topic: "zap-events",
+                    partition: partition,
+                    offset: message.offset
+                }
+            ])
         }
     })
 }
