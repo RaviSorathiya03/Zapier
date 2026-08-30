@@ -793,99 +793,19 @@ return result;
 
 Or using **database uniqueness constraints**:
 
-```javascript
-// Upsert: only insert if unique key doesn't exist
-await db.emailLog.upsert({
-  where: { actionExecutionId: actionExecution.id },
-  update: {},
-  create: {
-    actionExecutionId: actionExecution.id,
-    email,
-    status: 'sent'
-  }
-});
+```sh
+npx turbo link
+bun exec turbo link
+bun exec turbo link
 ```
 
----
+## Useful Links
 
-## Future Improvements
+Learn more about the power of Turborepo:
 
-### Planned Features
-
-- **Retry Mechanism:** Automatic retry with exponential backoff
-- **Action Chaining:** Pass outputs from one action to the next
-- **Conditional Branching:** If-then logic in workflows
-- **Scheduled Triggers:** Cron-based triggers in addition to webhooks
-- **OAuth Integrations:** Third-party service authentication
-- **Action Library:** Pre-built actions (send email, HTTP request, Slack notification, etc.)
-- **Frontend UI:** Drag-and-drop workflow builder
-- **Monitoring & Alerts:** Execution dashboard and alerting
-- **Rate Limiting:** Per-user and per-action rate limits
-- **Dead Letter Queue:** Failed executions for manual inspection
-- **Workflow Versioning:** Track workflow changes
-- **Audit Logging:** Full audit trail of workflow changes and executions
-
-### Scalability Considerations
-
-- Kafka partitioning for parallel execution
-- Worker autoscaling
-- Database optimization (indexes, partitioning)
-- Sweeper optimization (batching, parallelization)
-
----
-
-## Engineering Challenges
-
-### 1. Transactional Outbox Implementation
-
-**Challenge:** Ensuring atomic writes of execution and event records.
-
-**Solution:** Single database transaction wrapping both writes. Leveraging Prisma's transaction support.
-
-### 2. Idempotent Processing
-
-**Challenge:** Duplicate Kafka messages can cause duplicate action execution.
-
-**Solution:** Idempotency keys, deduplication caches, database-level uniqueness constraints, or idempotent action design.
-
-### 3. Execution State Management
-
-**Challenge:** Tracking partial execution progress and resuming on failure.
-
-**Solution:** Persistent `ActionExecution` records with granular status tracking and error logging.
-
-### 4. Event Ordering
-
-**Challenge:** Ensuring actions execute in the correct order despite asynchronous processing.
-
-**Solution:** Explicit action ordering via `Action.index` and sequential worker execution.
-
-### 5. Observability
-
-**Challenge:** Understanding system behavior in an asynchronous, distributed environment.
-
-**Solution (Planned):** Structured logging, execution tracing, and dashboard for workflow monitoring.
-
----
-
-## Contributing
-
-This is a portfolio project demonstrating distributed systems concepts. Contributions, improvements, and suggestions are welcome.
-
-### Development Guidelines
-
-1. Write tests for new features
-2. Follow existing code style
-3. Document architectural decisions
-4. Ensure idempotency for new actions
-5. Add database migrations for schema changes
-
----
-
-## License
-
-MIT License. See LICENSE file for details.
-
----
-
-**Built to understand event-driven architecture, not to be a production service.**
+- [Tasks](https://turborepo.dev/docs/crafting-your-repository/running-tasks)
+- [Caching](https://turborepo.dev/docs/crafting-your-repository/caching)
+- [Remote Caching](https://turborepo.dev/docs/core-concepts/remote-caching)
+- [Filtering](https://turborepo.dev/docs/crafting-your-repository/running-tasks#using-filters)
+- [Configuration Options](https://turborepo.dev/docs/reference/configuration)
+- [CLI Usage](https://turborepo.dev/docs/reference/command-line-reference)
