@@ -1,0 +1,97 @@
+model User {
+  id        String   @id @default(uuid())
+  name      String
+  email     String   @unique
+  password  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  zaps      Zap[]
+}
+
+model Zap {
+  id            String         @id @default(uuid())
+  name          String
+  userId        String
+  enabled       Boolean
+  user          User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  triggers      Trigger[]
+  actions       Action[]
+  zapExecutions zapExecution[]
+}
+
+model Trigger {
+  id                 String           @id @default(uuid())
+  zapId              String
+  zap                Zap              @relation(fields: [zapId], references: [id], onDelete: Cascade)
+  availableTriggerId String
+  availableTrigger   AvailableTrigger @relation(fields: [availableTriggerId], references: [id])
+  config             Json
+  zapExecutions      zapExecution[]
+}
+
+model AvailableTrigger {
+  id          String    @id @default(uuid())
+  name        String
+  description String
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  triggers    Trigger[]
+}
+
+model Action {
+  id                String            @id @default(uuid())
+  zapId             String
+  zap               Zap               @relation(fields: [zapId], references: [id], onDelete: Cascade)
+  index             Int
+  availableActionId String
+  availableAction   AvailableAction   @relation(fields: [availableActionId], references: [id])
+  config            Json
+  actionExecutions  actionExecution[]
+
+  @@unique([zapId, index])
+}
+
+model AvailableAction {
+  id          String   @id @default(uuid())
+  name        String
+  description String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  actions     Action[]
+}
+
+enum ExecutionStatus {
+  PENDING
+  PROCESSING
+  SUCCESS
+  FAILED
+  CANCELLED
+}
+
+model zapExecution {
+  id               String            @id @default(uuid())
+  zapId            String
+  zap              Zap               @relation(fields: [zapId], references: [id])
+  input            Json?
+  triggerId        String
+  trigger          Trigger           @relation(fields: [triggerId], references: [id])
+  status           ExecutionStatus   @default(PENDING)
+  startedAt        DateTime          @default(now())
+  endedAt          DateTime?
+  actionExecutions actionExecution[]
+}
+
+model actionExecution {
+  id          String          @id @default(uuid())
+  executionId String
+  execution   zapExecution    @relation(fields: [executionId], references: [id])
+  actionId    String
+  action      Action          @relation(fields: [actionId], references: [id])
+  status      ExecutionStatus @default(PENDING)
+  index       Int
+  input       Json?
+  output      Json?
+  error       String?
+  startedAt   DateTime        @default(now())
+  endedAt     DateTime?
+}
